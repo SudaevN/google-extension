@@ -8,7 +8,9 @@
       "matches": [
         "<all_urls>"
       ],
-      "js": ["content.js"]
+      "js": [
+        "content.js"
+      ]
     }
   ],
   "browser_action": {
@@ -16,7 +18,9 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "background.js"
+    ]
   },
   "permissions": [
     "http://www.softomate.net/*"

@@ -1,40 +1,29 @@
-// Listen messages
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    if( request.message === "readySitesList" ) {
-      console.log('Kuku');
-    }
+let hostName = window.location.hostname;
+
+popupShowCounter = getDataFromSS('popupShowCounter');
+popupCloseCounter = getDataFromSS('popupCloseCounter');
+
+sendQuery();
+
+function getDataFromSS(key) {
+  return sessionStorage.getItem(key) !== null ? sessionStorage.getItem(key) : 0;
+}
+
+function sendQuery() {
+  if (popupShowCounter < 3 && popupCloseCounter < 1) {
+    chrome.runtime.sendMessage({
+      message: "Show_message?",
+      host: hostName
+    }, function (response) {
+      if (response.message) {
+        showPopup();
+      } else {
+        console.log('no matches found');
+      }
+    });
   }
-);
-
-
-let closeCount = null;
-
-function getCloseCounter() {
-  closeCount = sessionStorage.getItem('closeCounterNum') !== null ? sessionStorage.getItem('closeCounterNum') : 0;
 }
 
-function setCounter(number) {
-  sessionStorage.setItem('closeCounterNum', number)
-}
-
-function showCounter() {
-  console.log(closeCount);
-}
-
-getCloseCounter();
-showCounter();
-
-function buildPopup() {
-  let popup = document.createElement('div');
-  popup.className = "sitesCheckerPopup";
-  popup.innerHTML = ""
-}
-
-function checkDomain() {
-  let hostname = window.location.hostname;
-  console.log("current domain - " + hostname);
-  sitesDATA.forEach(function (item) {
-    hostname.includes(item.domain) ? console.log(item.message) : console.log(item.domain + ' - No match')
-  })
+function showPopup() {
+  console.log("Show message");
 }
