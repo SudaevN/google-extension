@@ -9,7 +9,7 @@ function checkRelevanceData() {
   if (sitesList !== null && refrDelta < refreshInterval - 1) {
     sitesDATA = getSitesFromLS();
   } else {
-
+    refreshData();
   }
 }
 
@@ -42,8 +42,21 @@ function setTimeLS() {
   localStorage.setItem('refrTime', now);
 }
 
-function comprareHost(host, arrayItem) {
-  return host.includes(arrayItem);
+async function checkHost(host, array) {
+  let text = await isCoincidence();
+  chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+    var activeTab = tabs[0];
+    chrome.tabs.sendMessage(activeTab.id, {
+      "message": "Show_message",
+      "message_text": text
+    });
+  });
+}
+
+function isCoincidence(host, array) {
+  array.forEach(function(item){
+    if (host.includes(item.domain)) {return item.message}
+  })
 }
 
 
@@ -53,10 +66,10 @@ chrome.runtime.onMessage.addListener(
       "from a content script: " + sender.tab.url :
       "from the extension - " + request.message);
     if (request.message == "Show_message?") {
-      let value = true;
-      sendResponse({message: value});
+      sendResponse({message: "I'll say later"})
+      checkHost(request.host, sitesDATA);
     } else if (request.message == "give_me_sites") {
-      sendResponse({data: sitesDATA});
+      sendResponse({data: sitesDATA})
     }
     return true;
   });

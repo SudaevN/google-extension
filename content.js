@@ -15,15 +15,19 @@ function sendQuery() {
       message: "Show_message?",
       host: hostName
     }, function (response) {
-      if (response.message) {
-        showPopup();
-      } else {
-        console.log('no matches found');
-      }
-    });
+      console.log(response.message)
+    })
   }
 }
 
 function showPopup() {
   console.log("Show message");
 }
+
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if( request.message === "Show_popup" ) {
+      console.log(request.message_text);
+    }
+  }
+);
